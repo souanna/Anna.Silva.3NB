@@ -1,69 +1,89 @@
-// Testes Simples para Implementação de Árvore Binária de Busca (BST)
-// Os alunos devem implementar a árvore para fazer estes testes passarem
+struct Node {
+    value: i32,
+    left: Option<Box<Node>>,
+    right: Option<Box<Node>>,
+}
 
+struct BST {
+    root: Option<Box<Node>>,
+}
+
+impl BST {
+    fn new() -> Self {
+        BST { root: None }
+    }
+    
+    fn is_empty(&self) -> bool {
+        self.root.is_none()
+    }
+    
+    fn insert(&mut self, value: i32) {
+        self.root = Some(Self::insert_node(self.root.take(), value));
+    }
+    
+    fn insert_node(node: Option<Box<Node>>, value: i32) -> Box<Node> {
+        match node {
+            Some(mut n) => {
+                if value < n.value {
+                    n.left = Some(Self::insert_node(n.left.take(), value));
+                } else {
+                    n.right = Some(Self::insert_node(n.right.take(), value));
+                }
+                n
+            }
+            None => Box::new(Node {
+                value,
+                left: None,
+                right: None,
+            }),
+        }
+    }
+    
+    fn search(&self, value: i32) -> bool {
+        Self::search_node(&self.root, value)
+    }
+    
+    fn search_node(node: &Option<Box<Node>>, value: i32) -> bool {
+        match node {
+            Some(n) => {
+                if n.value == value {
+                    true
+                } else if value < n.value {
+                    Self::search_node(&n.left, value)
+                } else {
+                    Self::search_node(&n.right, value)
+                }
+            }
+            None => false,
+        }
+    }
+}
+
+// Testes
 #[cfg(test)]
 mod bst_tests {
-    // Importe sua implementação de BST aqui
-    // use crate::BST;
-    
+    use crate::BST;
+
     #[test]
     fn test_bst_new_and_empty() {
-        // Teste 1: Criar uma nova árvore e verificar se está vazia
         let bst = BST::new();
         assert!(bst.is_empty());
     }
     
     #[test]
     fn test_bst_insert_and_search() {
-        // Teste 2: Inserir elementos e verificar se estão na árvore
         let mut bst = BST::new();
         
-        // Inserir alguns valores
         bst.insert(10);
         bst.insert(5);
         bst.insert(15);
         
-        // Verificar se os valores inseridos estão na árvore
         assert!(bst.search(10));
         assert!(bst.search(5));
         assert!(bst.search(15));
         
-        // Verificar que um valor não inserido não está na árvore
         assert!(!bst.search(20));
         
-        // A árvore não deve mais estar vazia
         assert!(!bst.is_empty());
-    }
-}
-
-// Esqueleto para implementação da BST pelos alunos
-struct BST {
-    // Defina a estrutura aqui
-    // Dica: você precisará de um nó raiz
-}
-
-impl BST {
-    // Criar uma nova árvore vazia
-    fn new() -> Self {
-        // Implementar
-        unimplemented!()
-    }
-    
-    // Verificar se a árvore está vazia
-    fn is_empty(&self) -> bool {
-        // Implementar
-        unimplemented!()
-    }
-    
-    // Inserir um valor na árvore
-    fn insert(&mut self, value: i32) {
-        // Implementar
-        unimplemented!()
-    }
-    
-    // Buscar um valor na árvore
-    fn search(&self, value: i32) -> bool {
-        // Implementar
-        unimplemented!()
     }
 }
